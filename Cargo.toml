@@ -1,0 +1,18 @@
+[workspace]
+members = [
+    "crates/oads_camera"
+]
+
+[package]
+name = "openads-rs"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+oads_camera = { path="./crates/oads_camera", version="0.1.0" }
+
+[[bin]]
+name = "openads"
+path = "src/main.rs"

@@ -1,0 +1,18 @@
+[package]
+name = "oads_camera"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+rusb = "0.9.1"
+uuid = { version = "1.1.1", features = [
+    "v4",
+    "fast-rng",
+    "macro-diagnostics"
+] }
+failure = "0.1.8"
+serde_derive = "1.0.137"
+serde = { version = "1.0", features = [ "derive" ] }
+quick-xml = { version = "0.22", features = [ "serialize" ] }

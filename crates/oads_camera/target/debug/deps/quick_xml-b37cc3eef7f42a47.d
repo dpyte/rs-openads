@@ -1,0 +1,12 @@
+/home/dpyte/dev/development/repos/ReckonLabs/ai/openads-rs/crates/oads_camera/target/debug/deps/quick_xml-b37cc3eef7f42a47.rmeta: /home/dpyte/.cargo/registry/src/github.com-1ecc6299db9ec823/quick-xml-0.23.0/src/lib.rs /home/dpyte/.cargo/registry/src/github.com-1ecc6299db9ec823/quick-xml-0.23.0/src/errors.rs /home/dpyte/.cargo/registry/src/github.com-1ecc6299db9ec823/quick-xml-0.23.0/src/escapei.rs /home/dpyte/.cargo/registry/src/github.com-1ecc6299db9ec823/quick-xml-0.23.0/src/events/mod.rs /home/dpyte/.cargo/registry/src/github.com-1ecc6299db9ec823/quick-xml-0.23.0/src/events/attributes.rs /home/dpyte/.cargo/registry/src/github.com-1ecc6299db9ec823/quick-xml-0.23.0/src/reader.rs /home/dpyte/.cargo/registry/src/github.com-1ecc6299db9ec823/quick-xml-0.23.0/src/utils.rs /home/dpyte/.cargo/registry/src/github.com-1ecc6299db9ec823/quick-xml-0.23.0/src/writer.rs
+
+/home/dpyte/dev/development/repos/ReckonLabs/ai/openads-rs/crates/oads_camera/target/debug/deps/quick_xml-b37cc3eef7f42a47.d: /home/dpyte/.cargo/registry/src/github.com-1ecc6299db9ec823/quick-xml-0.23.0/src/lib.rs /home/dpyte/.cargo/registry/src/github.com-1ecc6299db9ec823/quick-xml-0.23.0/src/errors.rs /home/dpyte/.cargo/registry/src/github.com-1ecc6299db9ec823/quick-xml-0.23.0/src/escapei.rs /home/dpyte/.cargo/registry/src/github.com-1ecc6299db9ec823/quick-xml-0.23.0/src/events/mod.rs /home/dpyte/.cargo/registry/src/github.com-1ecc6299db9ec823/quick-xml-0.23.0/src/events/attributes.rs /home/dpyte/.cargo/registry/src/github.com-1ecc6299db9ec823/quick-xml-0.23.0/src/reader.rs /home/dpyte/.cargo/registry/src/github.com-1ecc6299db9ec823/quick-xml-0.23.0/src/utils.rs /home/dpyte/.cargo/registry/src/github.com-1ecc6299db9ec823/quick-xml-0.23.0/src/writer.rs
+
+/home/dpyte/.cargo/registry/src/github.com-1ecc6299db9ec823/quick-xml-0.23.0/src/lib.rs:
+/home/dpyte/.cargo/registry/src/github.com-1ecc6299db9ec823/quick-xml-0.23.0/src/errors.rs:
+/home/dpyte/.cargo/registry/src/github.com-1ecc6299db9ec823/quick-xml-0.23.0/src/escapei.rs:
+/home/dpyte/.cargo/registry/src/github.com-1ecc6299db9ec823/quick-xml-0.23.0/src/events/mod.rs:
+/home/dpyte/.cargo/registry/src/github.com-1ecc6299db9ec823/quick-xml-0.23.0/src/events/attributes.rs:
+/home/dpyte/.cargo/registry/src/github.com-1ecc6299db9ec823/quick-xml-0.23.0/src/reader.rs:
+/home/dpyte/.cargo/registry/src/github.com-1ecc6299db9ec823/quick-xml-0.23.0/src/utils.rs:
+/home/dpyte/.cargo/registry/src/github.com-1ecc6299db9ec823/quick-xml-0.23.0/src/writer.rs:
