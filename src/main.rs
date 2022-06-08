@@ -1,4 +1,4 @@
-
+use oads_camera::vision::Vision;
 
 fn main() {
     let mut scan_devices = oads_camera::read::Read::new();
@@ -11,5 +11,8 @@ fn main() {
         println!("detected {:?} devices\n", device_count);
     }
     scan_devices.save_updated_ids();
-
+    for x in scan_devices.validated_cameras() {
+        let vision = Vision::new(x.clone())
+            .execute();
+    }
 }

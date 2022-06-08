@@ -63,10 +63,6 @@ impl CameraInfo {
     }
 }
 
-impl CameraInfo {
-
-}
-
 impl IdInformation for CameraInfo {
     fn g_vendor_id(&self) -> String { self.vendor_id.to_string() }
     fn g_product_id(&self) -> String { self.product_id.to_string() }

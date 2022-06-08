@@ -143,4 +143,8 @@ impl Read {
     pub fn device_count(&self) -> usize {
         self.validated_devices.len()
     }
+
+    pub fn validated_cameras(&self) -> &Vec<CameraInfo> {
+        &self.validated_devices
+    }
 }
