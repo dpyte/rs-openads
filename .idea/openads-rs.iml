@@ -5,6 +5,7 @@
       <sourceFolder url="file://$MODULE_DIR$/crates/oads_camera/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/crates/oads_xml/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/crates/oads_storage/src" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
       <excludeFolder url="file://$MODULE_DIR$/crates/oads_xml/target" />
       <excludeFolder url="file://$MODULE_DIR$/crates/oads_camera/target" />

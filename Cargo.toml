@@ -12,7 +12,8 @@ edition = "2021"
 
 [dependencies]
 tokio = { version = "0.2", features = ["full"] }
-oads_camera = { path="./crates/oads_camera", version="0.1.0" }
+oads_camera  = { path="./crates/oads_camera", version="0.1.0" }
+oads_storage = { path="./crates/oads_storage", version="0.1.0" }
 
 [[bin]]
 name = "openads"

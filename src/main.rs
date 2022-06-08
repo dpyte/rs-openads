@@ -1,12 +1,20 @@
 
-use std::thread;
 use tokio::runtime::Runtime;
-use oads_camera::info::CameraInfo;
 use oads_camera::vision::Vision;
+use oads_camera::info::CameraInfo;
+use oads_camera::scan::IdInformation;
+use oads_storage::containers::Container;
 
-fn execute_main_loop(infos: Vec<CameraInfo>) {
+fn execute_main_loop(infos: Vec<CameraInfo>) -> Vec<Container> {
     let mut camera_runtimes: Vec<Runtime> = Vec::new();
+    let mut containers = Vec::new();
+
     for x in infos {
+        containers.push(Container::new(
+            x.g_name().to_string(),
+            x.g_id()
+        ));
+
         let mut rt = Runtime::new().expect("Failed to initiate runtime");
         rt.block_on(
             async move {
@@ -19,7 +27,9 @@ fn execute_main_loop(infos: Vec<CameraInfo>) {
         );
         camera_runtimes.push(rt);
     }
+    containers
 }
+
 
 fn main() {
     let mut scan_devices = oads_camera::read::Read::new();
@@ -32,5 +42,6 @@ fn main() {
         println!("detected {:?} devices\n", device_count);
     }
     scan_devices.save_updated_ids();
-    execute_main_loop(scan_devices.validated_cameras().clone());
+    let storage_containers = execute_main_loop(scan_devices.validated_cameras().clone());
+    
 }

@@ -1,7 +1,4 @@
 
-use crate::info::CameraInfo;
-
-
 pub trait IdInformation {
     fn g_vendor_id(&self) -> String;
     fn g_product_id(&self) -> String;

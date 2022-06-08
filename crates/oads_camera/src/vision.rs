@@ -4,24 +4,16 @@ use std::collections::HashMap;
 use std::fs::File;
 use std::io::BufRead;
 use std::path::Path;
-use std::num::ParseIntError;
 use opencv::core::Mat;
 use opencv::prelude::VideoCaptureTrait;
 use opencv::videoio;
 use opencv::videoio::VideoCapture;
 
 use crate::info::CameraInfo;
+use crate::read_lines;
 use crate::scan::IdInformation;
 
-const V_HEIGHT: u16 = 240;
-const V_WIDTH: u16 = 320;
 const SYS_DEV_PATH: &str = "/sys/class/video4linux";
-
-fn read_lines<P>(filename: P) -> io::Result<io::Lines<io::BufReader<File>>>
-where P: AsRef<Path> {
-    let file = File::open(filename)?;
-    Ok(io::BufReader::new(file).lines())
-}
 
 pub struct Vision {
     camera: Box<CameraInfo>,
