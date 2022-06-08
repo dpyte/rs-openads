@@ -1,3 +1,4 @@
+use opencv::viz::Camera;
 use crate::scan::{IdInformation, UsbLinkInfo};
 
 #[derive(Clone)]
@@ -35,15 +36,30 @@ pub struct CameraInfo {
 impl CameraInfo {
     pub fn new(name: &String, address: &String, connection_type: ConnectionType, port: u16, vendor_id: &String, product_id: &String, id: String) -> CameraInfo {
         CameraInfo {
-            name: name.to_string(),
-            address: address.to_string(),
+            name:           name.to_string(),
+            address:        address.to_string(),
             connection_type,
             port,
-            vendor_id: vendor_id.to_string(),
-            product_id: product_id.to_string(),
+            vendor_id:      vendor_id.to_string(),
+            product_id:     product_id.to_string(),
             id,
-            protocol: Protocol::USB,
-            status: Status::OFFLINE,
+            protocol:       Protocol::USB,
+            status:         Status::OFFLINE,
+        }
+    }
+
+    pub fn from(info: &CameraInfo) -> CameraInfo {
+        let info = info.clone();
+        CameraInfo {
+            name:               info.name,
+            address:            info.address,
+            connection_type:    info.connection_type,
+            port:               info.port,
+            vendor_id:          info.vendor_id,
+            product_id:         info.product_id,
+            id:                 info.id,
+            protocol:           info.protocol,
+            status:             info.status
         }
     }
 
