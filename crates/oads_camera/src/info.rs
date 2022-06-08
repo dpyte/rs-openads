@@ -1,21 +1,25 @@
 use crate::scan::{IdInformation, UsbLinkInfo};
 
+#[derive(Clone)]
 pub enum Protocol {
     USB,
     ETH
 }
 
+#[derive(Clone)]
 pub enum Status {
     OFFLINE,
     ONLINE,
 }
 
+#[derive(Clone)]
 pub enum ConnectionType {
     SSH,
     RTSP,
     HARD, // Wired
 }
 
+#[derive(Clone)]
 pub struct CameraInfo {
     name: String,
     address: String,
@@ -42,25 +46,30 @@ impl CameraInfo {
             status: Status::OFFLINE,
         }
     }
+
+    pub fn update_id(&mut self, id: String) {
+        self.id = id
+    }
+
+    pub fn g_id(&self) -> String { self.id.clone() }
+
+    pub fn g_connection_type(&self) -> String {
+        let retval = match self.connection_type {
+            ConnectionType::SSH => String::from("SSH"),
+            ConnectionType::RTSP => String::from("RTSP"),
+            ConnectionType::HARD => String::from("HARD"),
+        };
+        retval
+    }
+}
+
+impl CameraInfo {
+
 }
 
 impl IdInformation for CameraInfo {
-    fn g_vendor_id(&self) -> String {
-       self.vendor_id.to_string()
-    }
+    fn g_vendor_id(&self) -> String { self.vendor_id.to_string() }
+    fn g_product_id(&self) -> String { self.product_id.to_string() }
+    fn g_name(&self) -> String { self.name.to_string() }
 
-    fn g_product_id(&self) -> String {
-        self.product_id.to_string()
-    }
-
-    fn g_name(&self) -> String {
-        self.name.to_string()
-    }
-}
-
-impl<'a, 'b> PartialEq<UsbLinkInfo> for CameraInfo {
-    fn eq(&self, other: &UsbLinkInfo) -> bool {
-        self.product_id == other.g_product_id()
-            && self.vendor_id == other.g_vendor_id()
-    }
 }

@@ -1,0 +1,6 @@
+<cameras>
+	<camera name="nexus_external_wc" device_count=001 device_type="USB" vendor_id="7532" product_id="4728" id=""/>
+</cameras>
+<cameras>
+	<camera name="omen_wc" device_count=001 device_type="USB" vendor_id="1266" product_id="46631" id="af9a4d86-2b72-42ee-8faf-0a265d13561f"/>
+</cameras>
