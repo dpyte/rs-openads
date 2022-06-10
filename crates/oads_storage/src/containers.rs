@@ -1,9 +1,13 @@
 use std::fs;
+use std::sync::{Arc, Mutex};
 use chrono::{Local};
 use opencv::core::Mat;
 use opencv::core::Size;
+use opencv::dnn::print;
 use opencv::prelude::*;
 use opencv::videoio::VideoWriter;
+
+type ArcMutVW = Arc<Mutex<VideoWriter>>;
 
 fn update_last_saved(last_saved: String) -> String {
     let local: String = Local::now().date().to_string()
@@ -29,12 +33,12 @@ impl Container {
     pub fn new(name: String, id: String) -> Container {
         let last_saved = update_last_saved(String::new());
 
-        let mut root_storage = String::from("/var/system/openads/storage/");
-        root_storage.push_str("/");
-        root_storage.push_str(id.as_str());
+        let mut save_root = String::from("/var/system/openads/storage/");
+        save_root.push_str("/");
+        save_root.push_str(id.as_str());
 
-        fs::create_dir_all(root_storage.to_string()).expect("failed to create dir");
-        let save_to: String = vec![root_storage.to_string(),
+        fs::create_dir_all(save_root.to_string()).expect("failed to create dir");
+        let save_to: String = vec![save_root.to_string(),
                                    "/".to_string(),
                                    last_saved.to_string(),
                                    ".avi".to_string()]
@@ -48,11 +52,34 @@ impl Container {
         Container {
             name,
             id,
-            save_root: root_storage,
+            save_root,
             save_to: save_to.to_string(),
             video_writer,
-            frames: vec![]
+            frames: Vec::new()
         }
+    }
+
+    pub fn g_frames(&self) -> &Vec<Mat> {
+        &self.frames
+    }
+
+    pub fn frame_count(&self) -> usize {
+        self.frames.len()
+    }
+
+    pub fn writer(&self) -> &VideoWriter {  &self.video_writer }
+
+    /// Write data to the file
+    pub fn write(&mut self) {
+        if self.frames.is_empty() {
+            return
+        }
+
+        let front = self.frames.first().unwrap();
+        let _ = match self.video_writer.write(front) {
+            _ => ()
+        };
+        self.frames.pop();
     }
 }
 

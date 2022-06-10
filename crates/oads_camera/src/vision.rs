@@ -1,16 +1,15 @@
-use std::{fs, io, u16};
+use std::{fs, u16};
 use std::collections::HashMap;
 
-use std::fs::File;
-use std::io::BufRead;
-use std::path::Path;
-use opencv::core::Mat;
-use opencv::prelude::VideoCaptureTrait;
 use opencv::videoio;
-use opencv::videoio::VideoCapture;
+use std::io::BufRead;
+use std::sync::{Arc, Mutex, MutexGuard, PoisonError, RwLock};
+use opencv::core::Mat;
+use opencv::prelude::*;
+use opencv::videoio::{VideoCapture, VideoCaptureTrait};
 
-use crate::info::CameraInfo;
 use crate::read_lines;
+use crate::info::CameraInfo;
 use crate::scan::IdInformation;
 
 const SYS_DEV_PATH: &str = "/sys/class/video4linux";
@@ -21,6 +20,7 @@ pub struct Vision {
     match_device_info: HashMap<(String, String), String>,
     // OpenCV
     v_frame: Mat,
+    frames: Arc<Mutex<Vec<Mat>>>,
     // Torch Model
 }
 
@@ -31,7 +31,8 @@ impl Vision {
             camera: copy,
             is_active: true,
             match_device_info: HashMap::new(),
-            v_frame:Default::default()
+            v_frame:Default::default(),
+            frames: Arc::new(Mutex::new(Default::default()))
         }
     }
 
@@ -53,7 +54,16 @@ impl Vision {
             if skip_counter == 15 {
                 return;
             }
-            capture_device.read(&mut self.v_frame).expect("TODO: panic message");
+            let mut frame_be = self.v_frame.clone();
+            let capture_status = capture_device.read(&mut frame_be);
+            skip_counter = if capture_status.is_ok() {
+                let frame_is = &mut *self.frames.lock().unwrap();
+                frame_is.push(frame_be);
+                0
+            } else {
+                skip_counter += 1;
+                skip_counter
+            }
         }
     }
 
@@ -87,4 +97,8 @@ impl Vision {
         }
     }
 
+    pub fn g_frame(&self) -> std::result::Result<MutexGuard<'_, Vec<Mat>>,
+        PoisonError<MutexGuard<'_, Vec<Mat>>>> {
+        self.frames.lock()
+    }
 }
