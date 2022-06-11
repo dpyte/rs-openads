@@ -9,16 +9,6 @@ use opencv::videoio::VideoWriter;
 
 type ArcMutVW = Arc<Mutex<VideoWriter>>;
 
-fn update_last_saved(last_saved: String) -> String {
-    let local: String = Local::now().date().to_string()
-        .replace('-', "")
-        .replace(':', "");
-
-    if local == last_saved {
-        return last_saved
-    }
-    local
-}
 
 pub struct Container {
     name:           String,
@@ -57,14 +47,6 @@ impl Container {
             video_writer,
             frames: Vec::new()
         }
-    }
-
-    pub fn g_frames(&self) -> &Vec<Mat> {
-        &self.frames
-    }
-
-    pub fn frame_count(&self) -> usize {
-        self.frames.len()
     }
 
     pub fn writer(&self) -> &VideoWriter {  &self.video_writer }
