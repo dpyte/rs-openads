@@ -107,7 +107,9 @@ impl Read {
     pub fn save_updated_ids(&mut self) {
         // Update xml scanned data with validated
         // we know that validated <= read xml data
-        for x in &self.xml_read_data{
+
+        let mut write_block: Vec<String> = vec![String::from("<cameras>\n")];
+        for x in &self.xml_read_data {
             /*
             <cameras>
                 <camera name="" device_count="001" device_type="" vendor_id="" product_id="" id=""/>
@@ -117,22 +119,29 @@ impl Read {
                 Some(x) => x,
                 None => ""
             };
+
             let write_back = format!(
-                "<cameras>\n\t<camera name={:?} device_count=001 device_type={:?} vendor_id={:?} product_id={:?} id={:?}/>\n</cameras>\n",
+                "\t<camera name={:?} device_count=\"001\" device_type={:?} vendor_id={:?} product_id={:?} id={:?}/>\n",
                 x.name,
                 x.device_type,
                 x.vendor_id,
                 x.product_id,
                 id
             );
-            let write_to = OpenOptions::new()
-                .append(true)
-                .create(true)
-                .open("test.xml")
-                .expect("Unable to open file");
-            let mut write_to = BufWriter::new(write_to);
-            write_to.write_all(write_back.as_bytes()).expect("Unable to write data");
+            write_block.push(write_back.to_string());
         }
+        write_block.push(String::from("</cameras>\n"));
+
+        let write_back = write_block.join("");
+        let write_to = OpenOptions::new()
+            .read(true)
+            .write(true)
+            .create(true)
+            .truncate(true)
+            .open(READ_FROM)
+            .expect("Unable to open file");
+        let mut write_to = BufWriter::new(write_to);
+        write_to.write_all(write_back.as_bytes()).expect("Unable to write data");
     }
 
     pub fn device_count(&self) -> usize {
