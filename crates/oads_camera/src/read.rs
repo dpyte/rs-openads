@@ -1,16 +1,11 @@
 use std::fs;
-use std::fs::OpenOptions;
-use std::io::{BufWriter, Cursor, Write};
-use std::ptr::write;
 use uuid::Uuid;
-use quick_xml::{Reader, Writer};
 use serde::Deserialize;
+use std::fs::OpenOptions;
 use quick_xml::de::from_str;
-use quick_xml::events::Event;
-
+use std::io::{BufWriter, Write};
 use crate::info::{CameraInfo, ConnectionType};
-use crate::info::ConnectionType::{HARD, RTSP, SSH};
-use crate::scan::{IdInformation, scan_for_devices, UsbLinkInfo};
+use crate::scan::{scan_for_devices, UsbLinkInfo};
 
 const READ_FROM: &str = "/var/system/openads/config/camera/info/info.xml";
 
@@ -93,7 +88,7 @@ impl Read {
         }
 
         for i in x_scan_idxs {
-            let mut x_data = &mut self.xml_read_data[i];
+            let x_data = &mut self.xml_read_data[i];
             let id = match &x_data.id {
                 Some(id) => id.to_string(),
                 None => Uuid::new_v4().to_string()

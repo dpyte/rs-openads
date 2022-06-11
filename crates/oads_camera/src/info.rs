@@ -1,5 +1,4 @@
-use opencv::viz::Camera;
-use crate::scan::{IdInformation, UsbLinkInfo};
+use crate::scan::IdInformation;
 
 #[derive(Clone)]
 pub enum Protocol {
