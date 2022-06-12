@@ -179,16 +179,21 @@ impl Vision {
 
         loop {
             let (buffer, _) = stream.next().unwrap();
-            // interested in RGB matrix
-            let data = match &format.fourcc.repr {
+
+            // user-defined streamer will generate an avi1 output
+            //                          /-- Writer
+            // TODO: send this data to -
+            //                          \-- Model
+            //
+            let _data = match &format.fourcc.repr {
                 b"RGB3" => buffer.to_vec(),
                 b"MJPG" => {
                     let mut decoder = Decoder::new(buffer);
                     decoder.decode().expect("failed to decode JPEG")
                 },
+                b"AVI1" => buffer.to_vec(),
                 _ => Vec::new()
             };
-            debug!("{:?}", data);
         }
     }
 }
