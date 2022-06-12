@@ -4,7 +4,6 @@ use tokio::runtime::Runtime;
 use oads_camera::vision::Vision;
 use oads_camera::info::CameraInfo;
 
-
 fn execute_main_loop(infos: Vec<CameraInfo>) {
     let mut camera_runtimes: Vec<Runtime> = Vec::new();
 
