@@ -1,3 +1,4 @@
+use rusb::ffi::libusb_device;
 use crate::scan::IdInformation;
 
 #[derive(Clone)]
@@ -21,20 +22,20 @@ pub enum ConnectionType {
 
 #[derive(Clone)]
 pub struct CameraInfo {
-    name: String,
-    address: String,
-    connection_type: ConnectionType, // ssh, rtsp, ...
-    port: u16,
-    vendor_id: String,
-    product_id: String,
-    id: String,
-    protocol: Protocol,
-    status: Status,
+    name:               String,
+    address:            String,
+    vendor_id:          String,
+    product_id:         String,
+    id:                 String,
+    port:               u16,
+    status:             Status,
+    protocol:           Protocol,
+    connection_type:    ConnectionType, // ssh, rtsp, ...
 }
 
 impl CameraInfo {
-    pub fn new(name: &String, address: &String, connection_type: ConnectionType, port: u16, vendor_id: &String, product_id: &String, id: String) -> CameraInfo {
-        CameraInfo {
+    pub fn new(name: &String, address: &String, connection_type: ConnectionType, port: u16, vendor_id: &String, product_id: &String, id: String) -> Self {
+        Self {
             name:           name.to_string(),
             address:        address.to_string(),
             connection_type,
@@ -47,9 +48,9 @@ impl CameraInfo {
         }
     }
 
-    pub fn from(info: &CameraInfo) -> CameraInfo {
+    pub fn from(info: &CameraInfo) -> Self {
         let info = info.clone();
-        CameraInfo {
+        Self {
             name:               info.name,
             address:            info.address,
             connection_type:    info.connection_type,
@@ -62,10 +63,7 @@ impl CameraInfo {
         }
     }
 
-    pub fn update_id(&mut self, id: String) {
-        self.id = id
-    }
-
+    pub fn update_id(&mut self, id: String) {  self.id = id }
     pub fn g_id(&self) -> String { self.id.clone() }
 
     pub fn g_connection_type(&self) -> String {
@@ -82,5 +80,4 @@ impl IdInformation for CameraInfo {
     fn g_vendor_id(&self) -> String { self.vendor_id.to_string() }
     fn g_product_id(&self) -> String { self.product_id.to_string() }
     fn g_name(&self) -> String { self.name.to_string() }
-
 }
