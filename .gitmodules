@@ -1,3 +1,6 @@
 [submodule "crates/oads_camera/openads-models"]
 	path = crates/oads_camera/openads-models
 	url = git@github.com:dpyte/openads-models.git
+[submodule "crates/oads_models/openads-models"]
+	path = crates/oads_models/openads-models
+	url = git@github.com:dpyte/openads-models.git
