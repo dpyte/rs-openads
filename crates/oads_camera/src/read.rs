@@ -4,6 +4,7 @@ use serde::Deserialize;
 use std::fs::OpenOptions;
 use quick_xml::de::from_str;
 use std::io::{BufWriter, Write};
+use log::info;
 use crate::info::{CameraInfo, ConnectionType};
 use crate::scan::{scan_for_devices, UsbLinkInfo};
 
@@ -120,6 +121,7 @@ impl Read {
                 None => ""
             };
 
+            info!("updating meta data for {}, {:?}", x.name, id);
             let write_back = format!(
                 "\t<camera name={:?} device_count=\"001\" device_type={:?} vendor_id={:?} product_id={:?} id={:?}/>\n",
                 x.name,
@@ -142,6 +144,7 @@ impl Read {
             .expect("Unable to open file");
         let mut write_to = BufWriter::new(write_to);
         write_to.write_all(write_back.as_bytes()).expect("Unable to write data");
+        info!("xml update completed");
     }
 
     pub fn device_count(&self) -> usize {

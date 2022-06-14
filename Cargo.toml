@@ -1,6 +1,7 @@
 [workspace]
 members = [
-    "crates/oads_camera"
+    "crates/oads_log",
+    "crates/oads_camera",
 ]
 
 [package]

@@ -1,4 +1,3 @@
-use rusb::ffi::libusb_device;
 use crate::scan::IdInformation;
 
 #[derive(Clone)]
