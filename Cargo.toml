@@ -2,6 +2,7 @@
 members = [
     "crates/oads_log",
     "crates/oads_camera",
+	"crates/oads_models"
 ]
 
 [package]

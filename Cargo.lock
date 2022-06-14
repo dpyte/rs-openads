@@ -592,6 +592,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "oads_models"
+version = "0.1.0"
+
+[[package]]
 name = "object"
 version = "0.28.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"

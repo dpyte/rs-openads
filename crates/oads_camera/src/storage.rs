@@ -1,11 +1,12 @@
 use std::{fs, thread};
+use std::collections::HashMap;
+
+use filesize::file_real_size;
 use log::{info, warn};
 use opencv::prelude::Mat;
-use filesize::file_real_size;
-use std::collections::HashMap;
 use tokio::sync::mpsc::Receiver;
 
-static SYS_DEV_PATH: &str     = "/sys/class/video4linux";
+static SYS_DEV_PATH: &str = "/sys/class/video4linux";
 static STORAGE_CAPACITY: &str = "/var/system/openads/config/storage/capacity";
 
 
@@ -63,7 +64,7 @@ fn update_storage_capacity() -> u64 {
 /// creates a save target using the camera id and the last saved location
 fn update_last_saved(last_saved: String) -> String {
 	let local: String = chrono::Local::now().date().to_string().replace('-', "").replace(':', "");
-	if local == last_saved { return last_saved }
+	if local == last_saved { return last_saved; }
 	local
 }
 
@@ -78,12 +79,12 @@ fn set_save_directory(id: &String, save_location: &String) -> String {
 }
 
 pub struct Storage {
-	save_to:            String,
-	device_is:          String,
-	last_saved:         String,
-	device_name:        String,
-	storage_capacity:   u64,
-	receiver:           Receiver<Mat>,
+	save_to: String,
+	device_is: String,
+	last_saved: String,
+	device_name: String,
+	storage_capacity: u64,
+	receiver: Receiver<Mat>,
 }
 
 unsafe impl Send for Storage {}
@@ -93,12 +94,12 @@ impl Storage {
 	pub fn new(camera_id: String, camera_name: String, vendor_id: String, product_id: String, receiver: Receiver<Mat>) -> Self {
 		let storage_capacity = update_storage_capacity();
 
-		let last_saved     = update_last_saved(String::new());
-		let save_to        = set_save_directory(&camera_id, &last_saved.to_string());
-		let mut device_is  = String::from("/dev/");
+		let last_saved = update_last_saved(String::new());
+		let save_to = set_save_directory(&camera_id, &last_saved.to_string());
+		let mut device_is = String::from("/dev/");
 
 		let match_device_info = get_device_serial_port();
-		if match_device_info.contains_key(&(vendor_id.clone(), product_id.clone())){
+		if match_device_info.contains_key(&(vendor_id.clone(), product_id.clone())) {
 			let path_is = match_device_info.get(&(vendor_id, product_id));
 			let fetch_last: Vec<&str> = path_is.unwrap().split("/").collect();
 			device_is.push_str(fetch_last[fetch_last.len() - 1]);
@@ -111,7 +112,7 @@ impl Storage {
 			last_saved,
 			device_name: camera_name,
 			storage_capacity,
-			receiver
+			receiver,
 		}
 	}
 
@@ -125,8 +126,6 @@ impl Storage {
 
 	pub async fn async_writer(device_name: String) {
 		warn!("activating storage pool for {:?}", device_name);
-		loop {
-
-		}
+		loop {}
 	}
 }
