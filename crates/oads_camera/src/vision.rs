@@ -24,7 +24,6 @@ impl Vision {
 
 		info!("starting an executor service for {}", device_name);
 
-		let handle = Handle::current();
 		Self::start_video_processor(camera, recv);
 
 		let elephant = Elephant::new();
