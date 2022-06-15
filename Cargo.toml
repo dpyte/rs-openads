@@ -19,7 +19,6 @@ tokio = { version = "0.2", features = ["full"] }
 oads_log     = { path="./crates/oads_log",     version="0.1.0" }
 oads_camera  = { path="./crates/oads_camera",  version="0.1.0" }
 
-
 [[bin]]
 name = "openads"
 path = "src/main.rs"

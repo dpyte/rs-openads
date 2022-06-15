@@ -1,18 +1,22 @@
-use std::collections::HashMap;
+use log::warn;
 use tch::nn::VarStore;
+use std::collections::HashMap;
+use std::fs::File;
+use std::hash::BuildHasherDefault;
+use std::io::{BufReader, Lines};
 
 
 // Lets the system know whether to execute the model on CPU or GPU
 static MODEL_EXECUTION_TYPE: &str = "/var/system/openads/config/models/elephant/elephant.config";
 
 fn get_model_params() -> HashMap<String, String> {
-
 	let mut retval = HashMap::new();
 
+	let mut data: Lines<BufReader<File>>;
 	let mut use_config_data = true;
-	let data = match crate::read_lines(MODEL_EXECUTION_TYPE) {
-		Ok(buffer) => buffer,
-		Err(_) => { use_config_data = false; }
+	match crate::read_lines(MODEL_EXECUTION_TYPE) {
+		Ok(buffer) => { data = buffer },
+		Err(_) => { use_config_data = false }
 	};
 
 	if !use_config_data {
@@ -32,6 +36,7 @@ pub struct Elephant {
 
 impl Elephant {
 	pub fn new() -> Self {
+		let _ = get_model_params();
 		let varstore = tch::nn::VarStore::new(tch::Device::Cpu);
 		Self { varstore }
 	}

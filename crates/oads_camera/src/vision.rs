@@ -3,6 +3,7 @@ use std::thread;
 use opencv::core::Mat;
 use tokio::runtime::{Handle, Runtime};
 use tokio::sync::mpsc::Receiver;
+use oads_models::elephant::model::Elephant;
 
 use crate::camera::Camera;
 use crate::info::CameraInfo;
@@ -10,6 +11,7 @@ use crate::scan::IdInformation;
 
 pub struct Vision {
 	device_name:    String,
+	elephant:         Elephant,
 	// Torch Model
 }
 
@@ -24,7 +26,9 @@ impl Vision {
 
 		let handle = Handle::current();
 		Self::start_video_processor(camera, recv);
-		Self { device_name }
+
+		let elephant = Elephant::new();
+		Self { device_name, elephant }
 	}
 
 	async fn start_video_processor(mut camera: Camera, mut recv: Receiver<Mat>) {
