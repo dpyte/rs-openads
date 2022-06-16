@@ -10,6 +10,7 @@ root_dir = '/var/system/openads'
 config_dir = os.path.join(root_dir, 'config', 'camera', 'info')
 storage_dir = os.path.join(root_dir, 'storage')
 
+
 class TestDirectories(unittest.TestCase):
     def test_create_directory(self):
 
