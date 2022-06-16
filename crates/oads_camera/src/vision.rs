@@ -18,15 +18,15 @@ pub struct Vision {
 impl Vision {
 	/// initializes *Self and executes the opencv-based camera backend
 	/// * update[:?] -> storage backend is now build into the function.
-	pub async fn new(camera: CameraInfo) -> Self {
+	pub fn new(camera: CameraInfo) -> Self {
 		let device_name = camera.g_name();
 		let (camera, recv) = Camera::new(camera);
 
+		let elephant = Elephant::new();
 		info!("starting an executor service for {}", device_name);
 
 		Self::start_video_processor(camera, recv);
 
-		let elephant = Elephant::new();
 		Self { device_name, elephant }
 	}
 
