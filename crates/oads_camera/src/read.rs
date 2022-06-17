@@ -1,10 +1,10 @@
 use std::fs;
+use log::info;
 use uuid::Uuid;
 use serde::Deserialize;
 use std::fs::OpenOptions;
 use quick_xml::de::from_str;
 use std::io::{BufWriter, Write};
-use log::info;
 use crate::info::{CameraInfo, ConnectionType};
 use crate::scan::{scan_for_devices, UsbLinkInfo};
 
@@ -49,6 +49,9 @@ fn read_xml_data(read_from: &str) -> Vec<Camera> {
 	data.camera
 }
 
+/// Perform cross validation with the data contained in XML file with devices connected to
+/// the system
+//  !TODO: Refactor validated_devices to 'CameraInfo'
 pub struct Read {
 	xml_read_data: Vec<Camera>,
 	validated_devices: Vec<CameraInfo>
@@ -102,6 +105,7 @@ impl Read {
 			let allocate_new = CameraInfo::new(&x_data.name, &String::new(), ConnectionType::HARD,
 			                                   0, &x_data.vendor_id, &x_data.product_id, id);
 			self.validated_devices.push(allocate_new);
+			break;
 		}
 	}
 
@@ -147,11 +151,7 @@ impl Read {
 		info!("xml update completed");
 	}
 
-	pub fn device_count(&self) -> usize {
-		self.validated_devices.len()
-	}
+	pub fn device_count(&self) -> usize { self.validated_devices.len() }
 
-	pub fn validated_cameras(&self) -> &Vec<CameraInfo> {
-		&self.validated_devices
-	}
+	pub fn validated_camera(&self) -> CameraInfo { self.validated_devices[0].clone() }
 }
