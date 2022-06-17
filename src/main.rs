@@ -1,20 +1,14 @@
 use log::{error, info};
 use tokio::runtime::Runtime;
 
-use oads_camera::info::CameraInfo;
-use oads_camera::vision::Vision;
 use oads_log::LOG_FILE;
+use oads_camera::vision::Vision;
+use oads_camera::info::CameraInfo;
 
-fn execute_main_loop(infos: Vec<CameraInfo>) {
+async fn launch_camera_services(validated_cameras: CameraInfo) {
 	info!("preparing data for opencv-pipeline");
-	for x in infos {
-		let mut rt = Runtime::new().expect("Failed to initiate runtime");
-		rt.block_on(async move {
-			tokio::spawn(async move {
-				let _ = Vision::new(x);
-			});
-		});
-	}
+	let mut camera = Vision::new(validated_cameras, true);
+	camera.init();
 }
 
 fn main() {
@@ -22,14 +16,16 @@ fn main() {
 	let mut scan_devices = oads_camera::read::Read::new();
 	scan_devices.validate_and_match();
 
-	let device_count = scan_devices.device_count();
-	if device_count == 0 {
-		error!(target: "syslog", "failed to detect any valid device");
-	} else {
-		info!("detected {:?} devices\n", device_count);
-	}
+	let validated_cameras = scan_devices.validated_camera();
 	scan_devices.save_updated_ids();
 
-	let validated_cameras = scan_devices.validated_cameras();
-	let _storage_containers = execute_main_loop(validated_cameras.clone());
+	let device_count = scan_devices.device_count();
+	let to_continue = if device_count == 0 { error!(target: "syslog", "failed to detect any valid device"); false }
+		else { info!("detected {:?}", validated_cameras.g_id()); true };
+
+	if to_continue {
+		let mut c_service_rt = Runtime::new().unwrap();
+		let cam_service = launch_camera_services(validated_cameras);
+		c_service_rt.block_on(cam_service);
+	}
 }
