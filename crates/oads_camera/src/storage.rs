@@ -1,10 +1,11 @@
 use std::{fs, thread};
-use std::collections::HashMap;
-
+use log::{debug, info, warn};
+use opencv::prelude::{Mat, VideoWriterTrait};
 use filesize::file_real_size;
-use log::{info, warn};
-use opencv::prelude::Mat;
-use tokio::sync::mpsc::Receiver;
+use std::collections::HashMap;
+use crossbeam::channel::Receiver;
+use opencv::core::MatTraitConst;
+use opencv::videoio::VideoWriter;
 
 static SYS_DEV_PATH: &str = "/sys/class/video4linux";
 static STORAGE_CAPACITY: &str = "/var/system/openads/config/storage/capacity";
@@ -13,6 +14,17 @@ static STORAGE_CAPACITY: &str = "/var/system/openads/config/storage/capacity";
 fn check_storage_capacity(to_check: &String, sky: &u64) -> bool {
 	let file = file_real_size(to_check).unwrap_or(1 << 30);
 	*sky < file
+}
+
+fn deserialize_ids(line: String) -> (String, String) {
+	// Guaranteed to have '=' in the string ...
+	let first_split: Vec<&str> = line.split("=").collect();
+	let collection: Vec<&str> = first_split[1].split("/").collect();
+
+	let vendor = u16::from_str_radix(collection[0], 16).expect("failed to parse vendor id").to_string();
+	let product = u16::from_str_radix(collection[1], 16).expect("failed to parse product id").to_string();
+
+	(vendor, product)
 }
 
 /// configures appropriate device id and stores it into a hashmap with
@@ -31,13 +43,7 @@ fn get_device_serial_port() -> HashMap<(String, String), String> {
 		for line in contents {
 			if let Ok(line) = line {
 				if line.starts_with("PRODUCT") {
-					// Guaranteed to have '=' in the string ...
-					let first_split: Vec<&str> = line.split("=").collect();
-					let collection: Vec<&str> = first_split[1].split("/").collect();
-
-					let vendor = u16::from_str_radix(collection[0], 16).expect("failed to parse vendor id").to_string();
-					let product = u16::from_str_radix(collection[1], 16).expect("failed to parse product id").to_string();
-
+					let (vendor, product) = deserialize_ids(line);
 					mapped_devices.insert((vendor, product), path_is.to_string());
 				}
 			}
@@ -78,20 +84,20 @@ fn set_save_directory(id: &String, save_location: &String) -> String {
 	save_to
 }
 
+#[derive(Clone)]
 pub struct Storage {
-	save_to: String,
-	device_is: String,
-	last_saved: String,
-	device_name: String,
+	save_to:        String,
+	device_is:      String,
+	last_saved:     String,
+	device_name:    String,
 	storage_capacity: u64,
-	receiver: Receiver<Mat>,
 }
 
 unsafe impl Send for Storage {}
 
 impl Storage {
 	/// create a new instance of this structure
-	pub fn new(camera_id: String, camera_name: String, vendor_id: String, product_id: String, receiver: Receiver<Mat>) -> Self {
+	pub fn new(camera_id: String, camera_name: String, vendor_id: String, product_id: String) -> Self {
 		let storage_capacity = update_storage_capacity();
 
 		let last_saved = update_last_saved(String::new());
@@ -112,20 +118,19 @@ impl Storage {
 			last_saved,
 			device_name: camera_name,
 			storage_capacity,
-			receiver,
 		}
 	}
 
 	/// activates the internal async writer
-	pub fn enable_storage_pool(&self) {
-		let device_name = self.device_name.clone();
-		thread::spawn(move || { Self::async_writer(device_name) });
+	pub fn enable_storage_pool(&mut self, mut rx: Receiver<Mat>) {
+		let save_size = opencv::core::Size::new(320, 240);
+		let fourcc = VideoWriter::fourcc('A' as i8, 'V' as i8, 'I' as i8, '1' as i8).unwrap();
+		let mut video_writer = VideoWriter::new(self.save_to.as_str(), fourcc, 30 as f64, save_size, true).unwrap();
+		loop {
+			let frame = rx.recv().unwrap();
+			if !frame.empty() { let _ = video_writer.write(&frame); }
+		}
 	}
 
 	pub fn g_capture_device(&self) -> String { self.device_is.clone() }
-
-	pub async fn async_writer(device_name: String) {
-		warn!("activating storage pool for {:?}", device_name);
-		loop {}
-	}
 }
