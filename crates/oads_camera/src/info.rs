@@ -1,25 +1,25 @@
 use crate::scan::IdInformation;
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub enum Protocol {
 	USB,
 	ETH,
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub enum Status {
 	OFFLINE,
 	ONLINE,
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub enum ConnectionType {
 	SSH,
 	RTSP,
 	HARD, // Wired
 }
 
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct CameraInfo {
 	name: String,
 	address: String,
