@@ -1,4 +1,5 @@
-use crate::scan::IdInformation;
+use crate::data::scan::IdInformation;
+
 
 #[derive(Debug, Clone)]
 pub enum Protocol {

@@ -5,8 +5,9 @@ use serde::Deserialize;
 use std::fs::OpenOptions;
 use quick_xml::de::from_str;
 use std::io::{BufWriter, Write};
-use crate::info::{CameraInfo, ConnectionType};
-use crate::scan::{scan_for_devices, UsbLinkInfo};
+
+use crate::data::info::{CameraInfo, ConnectionType};
+use crate::data::scan::{scan_for_devices, UsbLinkInfo};
 
 const READ_FROM: &str = "/var/system/openads/config/camera/info/info.xml";
 
@@ -112,7 +113,6 @@ impl Read {
 	pub fn save_updated_ids(&mut self) {
 		// Update xml scanned data with validated
 		// we know that validated <= read xml data
-
 		let mut write_block: Vec<String> = vec![String::from("<cameras>\n")];
 		for x in &self.xml_read_data {
 			/*
