@@ -3,7 +3,7 @@ use tokio::runtime::Runtime;
 
 use oads_log::LOG_FILE;
 use oads_camera::vision::Vision;
-use oads_camera::info::CameraInfo;
+use oads_camera::data::info::CameraInfo;
 
 async fn launch_camera_services(validated_cameras: CameraInfo) {
 	info!("preparing data for opencv-pipeline");
@@ -13,7 +13,7 @@ async fn launch_camera_services(validated_cameras: CameraInfo) {
 
 fn main() {
 	log4rs::init_file(LOG_FILE, Default::default()).unwrap();
-	let mut scan_devices = oads_camera::read::Read::new();
+	let mut scan_devices = oads_camera::data::  read::Read::new();
 	scan_devices.validate_and_match();
 
 	let validated_cameras = scan_devices.validated_camera();

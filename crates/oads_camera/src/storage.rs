@@ -1,11 +1,11 @@
 use std::{fs, thread};
 use log::{debug, info, warn};
-use opencv::prelude::{Mat, VideoWriterTrait};
 use filesize::file_real_size;
 use std::collections::HashMap;
-use crossbeam::channel::Receiver;
 use opencv::core::MatTraitConst;
 use opencv::videoio::VideoWriter;
+use crossbeam::channel::{Sender, Receiver};
+use opencv::prelude::{Mat, VideoWriterTrait};
 
 static SYS_DEV_PATH: &str = "/sys/class/video4linux";
 static STORAGE_CAPACITY: &str = "/var/system/openads/config/storage/capacity";
@@ -84,6 +84,11 @@ fn set_save_directory(id: &String, save_location: &String) -> String {
 	save_to
 }
 
+pub struct Channel<T> {
+	tx: Sender<T>,
+	rx: Receiver<T>,
+}
+
 #[derive(Clone)]
 pub struct Storage {
 	save_to:        String,
@@ -91,13 +96,15 @@ pub struct Storage {
 	last_saved:     String,
 	device_name:    String,
 	storage_capacity: u64,
+
+	// Controls activity status of this service - Online/ Offline
 }
 
 unsafe impl Send for Storage {}
 
 impl Storage {
 	/// create a new instance of this structure
-	pub fn new(camera_id: String, camera_name: String, vendor_id: String, product_id: String) -> Self {
+	pub fn new(camera_id: String, device_name: String, vendor_id: String, product_id: String) -> Self {
 		let storage_capacity = update_storage_capacity();
 
 		let last_saved = update_last_saved(String::new());
@@ -110,15 +117,8 @@ impl Storage {
 			let fetch_last: Vec<&str> = path_is.unwrap().split("/").collect();
 			device_is.push_str(fetch_last[fetch_last.len() - 1]);
 		}
-		warn!("{} => setting save location to {}", camera_name, save_to);
-
-		Self {
-			save_to,
-			device_is,
-			last_saved,
-			device_name: camera_name,
-			storage_capacity,
-		}
+		warn!("{} => setting save location to {}", device_name, save_to);
+		Self { save_to, device_is, last_saved, device_name, storage_capacity }
 	}
 
 	/// activates the internal async writer
@@ -126,6 +126,7 @@ impl Storage {
 		let save_size = opencv::core::Size::new(320, 240);
 		let fourcc = VideoWriter::fourcc('A' as i8, 'V' as i8, 'I' as i8, '1' as i8).unwrap();
 		let mut video_writer = VideoWriter::new(self.save_to.as_str(), fourcc, 30 as f64, save_size, true).unwrap();
+
 		loop {
 			let frame = rx.recv().unwrap();
 			if !frame.empty() { let _ = video_writer.write(&frame); }
