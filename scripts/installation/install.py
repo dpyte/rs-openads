@@ -1,51 +1,115 @@
-#!bin/env python3
+#!bin/python3
 
 import os
+import sys
 import shutil
 
 from pathlib import Path
+from shutil import copyfile
 
-path_to_info_xml = '../../configuration/camera/info.xml'
-path_to_log_config = '../../crates/oads_log/config/log_config.yaml'
+# /var/system/openads
+# ├── config
+# │   ├── camera
+# │   │   └── info
+# │   │       ├── associated_ids.xml
+# │   │       ├── info.xml
+# │   │       └── registered_devices.xml
+# │   ├── log
+# │   │   └── log_config.yaml
+# │   ├── models
+# │   │   ├── elephant
+# │   │   │   ├── elephant.config
+# │   │   │   └── scad_elephantnn_model.pt
+# │   │   └── facial
+# │   │       └── haarcascade_frontalface_default.xml
+# │   └── storage
+# │       └── capacity
+# ├── execution
+# │   └── exec
+# └── storage
 
+root_path = '/var/system/openads'
+copy_root_path = os.path.abspath('../../configuration')
 
-# Configure and crate directory for informational data
-def check_info(config_dir):
-    cpath = Path(config_dir)
-    cpath.parent.mkdir(parents=True, exist_ok=True)
+system_level_dirs = ['config', 'execution', 'storage']
+config_sub_dirs   = ['camera', 'log', 'models', 'models', 'storage']
+sublevel_directories = {
+    'config': config_sub_dirs,
+    'execution': [],
+    'storage': [],
+}
 
-    config_src = os.path.abspath(path_to_info_xml)
-    shutil.copyfile(config_src, os.path.join(config_dir, 'info.xml'))
+def generate_directories():
+    print('- Creating directories')
+    # Create root dir
+    path = Path(root_path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    
+    # Setup first level directories
+    for sl in system_level_dirs:
+        to_generate = os.path.join(root_path, sl)
+        print('├── Setting up {}'.format(to_generate))
+        # sub_root = Path(to_generate)
+        # sub_root.parent.mkdir(parents=True, exist_ok=True)
+        os.makedirs(to_generate, exist_ok=True) 
+        
+        # Setup second level directories
+        contains_sub = sublevel_directories[sl]
+        if contains_sub:
+            for x in contains_sub:
+                level_dir = os.path.join(to_generate, x)
+                print('    ├── {}'.format(level_dir))
+                os.makedirs(level_dir, exist_ok=True)
+                # path = Path(level_dir)
+                # path.parent.mkdir(parents=True, exist_ok=True)
 
+                if x == 'camera':
+                    t_level_dir = os.path.join(level_dir, 'info')
+                    os.makedirs(t_level_dir, exist_ok=True)
+                    # path = Path(t_level_dir)
+                    # path.parent.mkdir(parents=True, exist_ok=True)
+                    print('        ├── {}'.format(t_level_dir))
+                elif x == 'models':
+                    for d in ['elephant', 'facial']:
+                        t_level_dir = os.path.join(level_dir, d)
+                        os.makedirs(t_level_dir, exist_ok=True)
+                        # path = Path(t_level_dir)
+                        # path.parent.mkdir(parents=True, exist_ok=True)
+                        print('        ├── {}'.format(t_level_dir))
+                        
 
-def check_log(log_dir):
-    lpath = Path(log_dir)
-    lpath.parent.mkdir(parents=True, exist_ok=True)
-
-    log_src = os.path.abspath(path_to_log_config)
-    shutil.copyfile(log_src, os.path.join(log_dir, 'log_config.yaml'))
-
-
-def check_for_openads():
-    root_dir = '/var/system/openads'
-    config_dir = os.path.join(root_dir, 'config', 'camera')
-    log_dir = os.path.join(root_dir, 'config', 'log')
-    storage_dir = os.path.join(root_dir, 'storage')
-
-    rpath = Path(root_dir)
-    rpath.parent.mkdir(parents=True, exist_ok=True)
-
-    check_info(config_dir)
-    check_log(log_dir)
-
-    spath = Path(storage_dir)
-    spath.parent.mkdir(parents=True, exist_ok=True)
+def copy_files():
+    mapped_files = [
+        # Camera info
+        (os.path.join(copy_root_path, 'camera', 'info.xml'),        os.path.join(root_path, 'config', 'camera', 'info')),
+        # Log
+        (os.path.join(copy_root_path, 'log', 'log_config.yaml'),    os.path.join(root_path, 'config', 'log')),
+        # Execution,
+        (os.path.join(copy_root_path, 'execution', 'exec'),         os.path.join(root_path, 'execution')),
+        # Storage 
+        (os.path.join(copy_root_path, 'storage', 'capacity'),       os.path.join(root_path, 'config', 'storage')),
+        # Elephant
+        (os.path.join(copy_root_path, 'models', 'elephant.config'), os.path.join(root_path, 'config', 'models', 'elephant')),
+        (os.path.join(copy_root_path, 'models', 'scad_elephantnn_model.pt'), os.path.join(root_path, 'config', 'models', 'elephant')),
+    ]
+    print('Copying files ...')
+    for _, (copy_from, copy_to) in enumerate(mapped_files):
+        filename = os.path.basename(copy_from)
+        
+        to_copy = os.path.join(copy_to, filename)
+        print('- copying {} -> {}'.format(copy_from, to_copy))
+        copyfile(copy_from, to_copy)
 
 
 def main():
-    check_for_openads()
-    pass
-
+    generate_directories()
+    copy_files()
+    
 
 if __name__ == '__main__':
+    is_root = os.geteuid() == 0
+    if is_root:
+        sys.exit('Do NOT execute this script as root')
     main()
+    
+
