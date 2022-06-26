@@ -102,8 +102,7 @@ impl Vision {
 				thread::sleep(Duration::from_millis(120));
 				continue;
 			}
-
-			let faces = crate::process::processing::detect_facial_presence(&frame);
+			let faces = crate::process::processing::scan_facial_presence(&frame);
 		}
 		info!("Stopping camera services");
 	}
