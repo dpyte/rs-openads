@@ -1,7 +1,6 @@
 use crate::process::execution::RuntimeMode::{Execution, Learning};
 use crate::read_lines;
 
-
 /// Path to execution mode file. This file lets the system know whether it is executing in learning mode or execution mode.
 static PATH_TO_EXECUTION_MODE: &str = "/var/system/openads/execution/exec";
 
