@@ -1,11 +1,9 @@
 use log::{error, info};
-use tokio::runtime::Runtime;
-
 use oads_log::LOG_FILE;
 use oads_camera::vision::Vision;
 use oads_camera::data::info::CameraInfo;
 
-async fn launch_camera_services(validated_cameras: CameraInfo) {
+fn launch_camera_services(validated_cameras: CameraInfo) {
 	info!("preparing data for opencv-pipeline");
 	let mut camera = Vision::new(validated_cameras, true);
 	camera.init();
@@ -24,8 +22,6 @@ fn main() {
 		else { info!("detected {:?}", validated_cameras.g_id()); true };
 
 	if to_continue {
-		let mut c_service_rt = Runtime::new().unwrap();
-		let cam_service = launch_camera_services(validated_cameras);
-		c_service_rt.block_on(cam_service);
+		launch_camera_services(validated_cameras);
 	}
 }
